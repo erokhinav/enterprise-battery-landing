@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Enterprise Battery — Custodial Battery (TON)</title>
+    <meta
+      name="description"
+      content="Enterprise Battery is a prepaid gas bank: fund a balance once, and Battery pays on-chain fees for your users’ transactions while charging the actual final_cost to your enterprise balance."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="container topbar__inner">
+        <div class="brand">
+          <div class="brand__mark" aria-hidden="true"></div>
+          <div class="brand__text">
+            <div class="brand__name">Enterprise Battery</div>
+            <div class="brand__sub">Custodial Battery • TON</div>
+          </div>
+        </div>
+        <nav class="topnav" aria-label="Primary">
+          <a class="topnav__link" href="#overview">Overview</a>
+          <a class="topnav__link" href="#how-it-works">How it works</a>
+          <a class="topnav__link" href="#api">API methods</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero" id="overview">
+        <div class="container">
+          <div class="hero__grid">
+            <div class="hero__copy">
+              <h1 class="hero__title">
+                Pay gas fees for your users
+              </h1>
+              <p class="hero__lead">
+                Top-up your TON gas-bank once and let Battery pay gas fees for your users.
+              </p>
+              <div class="hero__cta">
+                <a
+                  class="button button--primary"
+                  href="https://t.me/tonkeeper?text=Hello%2C%20I%20would%20like%20to%20apply%20for%20Enterprise%20battery%20API."
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >Apply for API</a
+                >
+                <a class="button button--ghost" href="#api">View API methods</a>
+              </div>
+
+              <!-- <div class="hero__benefits" role="region" aria-label="Why use Enterprise Battery">
+                <div class="hero__benefit">
+                  <b>Smoother onboarding</b>
+                  <span>Users can transact even without TON for fees.</span>
+                </div>
+                <div class="hero__benefit">
+                  <b>Clear budgeting</b>
+                  <span>Pre-fund once and keep fee spending predictable.</span>
+                </div>
+                <div class="hero__benefit">
+                  <b>Simple operations</b>
+                  <span>One integration point to sponsor fees across your product.</span>
+                </div>
+              </div> -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="how-it-works">
+        <div class="container">
+          <div class="section__head">
+            <h2 class="section__title">How it works</h2>
+            <p class="section__subtitle">
+              A simple flow: fund once, estimate, send, track.
+            </p>
+          </div>
+
+          <div class="steps">
+            <div class="step">
+              <div class="step__num">01</div>
+              <div class="step__body">
+                <div class="step__title">Provision an enterprise account</div>
+                <div class="step__text">
+                  You receive an enterprise top-up wallet address and an auth token
+                  for <code>X-Enterprise-Auth</code>.
+                </div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step__num">02</div>
+              <div class="step__body">
+                <div class="step__title">Top up in TON</div>
+                <div class="step__text">
+                  Fund the enterprise wallet on-chain. Your balance is tracked in
+                  TON units.
+                </div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step__num">03</div>
+              <div class="step__body">
+                <div class="step__title">Configure excess address (optional)</div>
+                <div class="step__text">
+                  Fetch <code>excess_account</code> and use it as
+                  <code>response_destination</code> for jetton transfers to reduce
+                  effective fees.
+                </div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step__num">04</div>
+              <div class="step__body">
+                <div class="step__title">Estimate upfront payment</div>
+                <div class="step__text">
+                  Call <code>estimate</code> with a signed external message BOC and
+                  wallet public key. Get user fees calculated in TON.
+                </div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step__num">05</div>
+              <div class="step__body">
+                <div class="step__title">Send & track</div>
+                <div class="step__text">
+                  Send the same payload with <code>send</code>, then poll message
+                  status by <code>msg_id</code> to get <code>final_cost</code> and
+                  transaction hashes.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section--api" id="api">
+        <div class="container">
+          <div class="section__head">
+            <h2 class="section__title">API methods</h2>
+            <p class="section__subtitle">
+              Swagger-style overview of Enterprise endpoints.
+            </p>
+          </div>
+
+          <!-- <div class="api-controls">
+            <div class="api-controls__left">
+              <label class="field">
+                <span class="field__label">Search</span>
+                <input id="apiSearch" class="field__input" type="search" placeholder="Type: estimate, status, /enterprise/…" />
+              </label>
+            </div> -->
+            <!-- <div class="api-controls__right">
+              <button class="button button--small button--ghost" id="expandAll" type="button">
+                Expand all
+              </button>
+              <button class="button button--small button--ghost" id="collapseAll" type="button">
+                Collapse all
+              </button>
+            </div> -->
+          <!-- </div> -->
+
+          <div class="api-list" id="apiList" aria-live="polite"></div>
+
+          <!-- <div class="api-footnote">
+            Spec source: <code>api/enterprise-api.yml</code>. All requests require
+            <code>X-Enterprise-Auth</code>.
+          </div> -->
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="container footer__inner">
+        <div class="footer__left">
+          <div class="footer__title">Enterprise Battery</div>
+          <div class="footer__text">
+            Custodial Battery API for enterprise-funded gas on TON.
+          </div>
+        </div>
+        <div class="footer__right">
+          <a class="footer__link" href="mailto:support@tonkeeper.com">support@tonkeeper.com</a>
+        </div>
+      </div>
+    </footer>
+
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
