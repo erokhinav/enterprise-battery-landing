@@ -6,7 +6,7 @@ const enterpriseEndpoints = [
     description:
       "Returns your enterprise balance in TON and the dedicated on-chain wallet address used for top-ups.",
     request: {
-      headers: [{ name: "X-Enterprise-Auth", required: true, example: "<token>" }],
+      headers: [{ name: "X-Enterprise-Auth" }],
     },
     response: {
       "200": {
@@ -21,8 +21,8 @@ const enterpriseEndpoints = [
     description:
       "Returns wallet-specific configuration, including an excess address to use as response_destination for jetton transfers to reduce effective fees.",
     request: {
-      headers: [{ name: "X-Enterprise-Auth", required: true, example: "<token>" }],
-      pathParams: [{ name: "wallet_id", required: true, example: "0:..." }],
+      headers: [{ name: "X-Enterprise-Auth"}],
+      pathParams: [{ name: "wallet_id"}],
     },
     response: {
       "200": {
@@ -37,12 +37,9 @@ const enterpriseEndpoints = [
     description:
       "Estimates upfront TON that will be reserved to pay network fees for the provided external message BOC. Optionally returns an emulation result.",
     request: {
-      headers: [
-        { name: "X-Enterprise-Auth", required: true, example: "<token>" },
-        { name: "Accept-Language", required: false, example: "en" },
-      ],
-      pathParams: [{ name: "wallet_id", required: true, example: "0:..." }],
-      query: [{ name: "emulate", required: false, example: "false" }],
+      headers: [{ name: "X-Enterprise-Auth"}],
+      pathParams: [{ name: "wallet_id"}],
+      query: [{ name: "emulate", type: "boolean" }],
       body: {
         contentType: "application/json",
         example: {
@@ -64,7 +61,7 @@ const enterpriseEndpoints = [
     description:
       "Sends the signed external message. Battery pays network fees and returns msg_id for tracking. The same payload as estimate is expected.",
     request: {
-      headers: [{ name: "X-Enterprise-Auth", required: true, example: "<token>" }],
+      headers: [{ name: "X-Enterprise-Auth"}],
       pathParams: [{ name: "wallet_id", required: true, example: "0:..." }],
       body: {
         contentType: "application/json",
@@ -76,7 +73,7 @@ const enterpriseEndpoints = [
     },
     response: {
       "200": {
-        properties: ["msg_id (string)", "external? (string)"],
+        properties: ["msg_id (string)", "external (string)"],
       },
     },
   },
@@ -87,7 +84,7 @@ const enterpriseEndpoints = [
     description:
       "Fetches message execution status and final billing info (final_cost) plus on-chain hashes for both the payment and the committed transaction.",
     request: {
-      headers: [{ name: "X-Enterprise-Auth", required: true, example: "<token>" }],
+      headers: [{ name: "X-Enterprise-Auth" }],
       pathParams: [{ name: "msg_id", required: true, example: "<uuid>" }],
     },
     response: {
@@ -147,18 +144,16 @@ function renderEndpoint(ep, idx) {
   const pathParams = (ep.request?.pathParams || [])
     .map(
       (p) =>
-        `<div><code>${escapeHtml(p.name)}</code>${p.required ? " <b>(required)</b>" : ""}${
-          p.example ? ` — <span class="muted">${escapeHtml(p.example)}</span>` : ""
-        }</div>`
+        `<div><code>${escapeHtml(p.name)}</code> <span class="muted">(string)</span></div>`
     )
     .join("");
 
   const query = (ep.request?.query || [])
     .map(
       (q) =>
-        `<div><code>${escapeHtml(q.name)}</code>${q.required ? " <b>(required)</b>" : ""}${
-          q.example ? ` — <span class="muted">${escapeHtml(q.example)}</span>` : ""
-        }</div>`
+        `<div><code>${escapeHtml(q.name)}</code> <span class="muted">(${escapeHtml(
+          q.type || "string"
+        )})</span></div>`
     )
     .join("");
 
@@ -174,11 +169,22 @@ function renderEndpoint(ep, idx) {
     : "";
 
   const resp200 = ep.response?.["200"]?.properties?.length
-    ? `<div>${ep.response["200"].properties.map((p) => `<div><code>${escapeHtml(p)}</code></div>`).join("")}</div>`
+    ? `<div>${ep.response["200"].properties
+        .map((p) => {
+          const m = String(p).match(/^(.*)\s+\(([^)]+)\)$/);
+          if (m) {
+            const name = m[1].trim();
+            const type = m[2].trim();
+            return `<div><code>${escapeHtml(name)}</code> <span class="muted">(${escapeHtml(
+              type
+            )})</span></div>`;
+          }
+          return `<div><code>${escapeHtml(p)}</code></div>`;
+        })
+        .join("")}</div>`
     : "<div><span class='muted'>—</span></div>";
 
   const details = [
-    renderKvRow("operationId", `<code>${escapeHtml(ep.operationId)}</code>`),
     renderKvRow("headers", headers || "<span class='muted'>—</span>"),
     ep.request?.pathParams?.length ? renderKvRow("path params", pathParams) : "",
     ep.request?.query?.length ? renderKvRow("query", query) : "",
